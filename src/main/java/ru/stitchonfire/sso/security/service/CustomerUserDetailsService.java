@@ -27,17 +27,19 @@ public class CustomerUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public void createUser(String username, String password) {
+    public void createUser(String username, String password, String twoFactorKey, String answer) {
         userRepository.save(
                 User.builder()
                         .username(username)
                         .password(passwordEncoder.encode(password))
+                        .twoFactorSecretKey(twoFactorKey)
+                        .questionAnswer(passwordEncoder.encode(answer))
                         .build()
         );
     }
 
     public void createUser() {
-        createUser("admin", "password");
-        createUser("user", "password");
+        createUser("admin", "password", "PTDLEB7AQTPY5OXYLNVXVISBYAKWRLNS", "Сашенька");
+        createUser("user", "password", "HVR4CFHAFOWFGGFAGSA5JVTIMMPG6GMT", "Мурзик");
     }
 }

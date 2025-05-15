@@ -31,6 +31,10 @@ public class User implements UserDetails {
 
     String password;
 
+    String twoFactorSecretKey;
+
+    String questionAnswer;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
