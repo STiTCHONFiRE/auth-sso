@@ -1,0 +1,25 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+
+config:
+  issuer-uri: http://localhost:8080
+  redirect-uri: http://localhost:4200
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: password
+    username: spring_user
+    url: jdbc:postgresql://localhost/auth_db
+  application:
+    name: auth-sso
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create-drop
