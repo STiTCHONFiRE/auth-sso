@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationProcess;
 import ru.stitchonfire.sso.security.auth.process.AbstractAuthenticationProcessFilter;
 import ru.stitchonfire.sso.security.auth.provider.NoCompletedAuthenticationToken;
+import ru.stitchonfire.sso.security.model.User;
 
 public class MFAAuthenticationProcess implements ChainedAuthenticationProcess {
 

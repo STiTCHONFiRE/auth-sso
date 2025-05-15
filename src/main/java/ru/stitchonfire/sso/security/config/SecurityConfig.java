@@ -1,9 +1,6 @@
 package ru.stitchonfire.sso.security.config;
 
 
-import java.time.Duration;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -18,7 +15,6 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
@@ -38,6 +34,10 @@ import ru.stitchonfire.sso.security.auth.process.mfa.MFAAuthenticationProcess;
 import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationFilter;
 import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationProcess;
 import ru.stitchonfire.sso.security.handler.CustomDeniedHandlerHandler;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -136,4 +136,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", cfg);
         return source;
     }
+
 }

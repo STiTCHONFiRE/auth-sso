@@ -1,29 +1,31 @@
 package ru.stitchonfire.sso.security.config;
 
-import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.stitchonfire.sso.security.auth.process.mfa.MFAAuthenticationTokenProvider;
 import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationTokenProvider;
 import ru.stitchonfire.sso.security.auth.provider.NoCompletedAuthenticationProvider;
+import ru.stitchonfire.sso.security.repository.UserRepository;
 import ru.stitchonfire.sso.security.service.CustomerUserDetailsService;
+
+import java.util.List;
 
 @Configuration
 public class AuthenticationConfiguration {
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomerUserDetailsService();
+    public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return new CustomerUserDetailsService(userRepository, passwordEncoder);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
