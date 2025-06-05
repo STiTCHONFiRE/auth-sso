@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record FaceVerificationResponse(Result result) {
+public record FaceVerificationResponse(
+        List<Result> result
+) {
 
     public record Result(
             @JsonProperty("face_matches")
