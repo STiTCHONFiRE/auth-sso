@@ -46,6 +46,8 @@
         Invalid username and password.</div>
       <div class="card flex-shrink-0 w-11/12 max-w-sm shadow-2xl bg-base-100 m-5">
         <form class="card-body" th:action="@{/login}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
           <div class="form-control">
             <label class="label">
               <span class="label-text">Имя пользователя</span>

@@ -1,4 +1,4 @@
-package ru.stitchonfire.sso.security.auth.process.mfa;
+package ru.stitchonfire.sso.security.auth.process.totp;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,11 +11,11 @@ import ru.stitchonfire.sso.security.auth.process.AbstractAuthenticationProcessFi
 import ru.stitchonfire.sso.security.auth.provider.NoCompletedAuthenticationToken;
 import ru.stitchonfire.sso.security.model.User;
 
-public class MFAAuthenticationProcess implements ChainedAuthenticationProcess {
+public class TotpAuthenticationProcess implements ChainedAuthenticationProcess {
 
     @Override
     public Class<? extends AbstractAuthenticationProcessFilter> getFilterClass() {
-        return MFAAuthenticationFilter.class;
+        return TotpAuthenticationFilter.class;
     }
 
     @Override

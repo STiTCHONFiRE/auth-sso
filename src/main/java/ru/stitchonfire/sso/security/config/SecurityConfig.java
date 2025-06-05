@@ -29,10 +29,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationHandler;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationProcess;
 import ru.stitchonfire.sso.security.auth.process.AntiExploitAuthenticationProcessFilter;
-import ru.stitchonfire.sso.security.auth.process.mfa.MFAAuthenticationFilter;
-import ru.stitchonfire.sso.security.auth.process.mfa.MFAAuthenticationProcess;
+import ru.stitchonfire.sso.security.auth.process.face.FaceAuthenticationFilter;
+import ru.stitchonfire.sso.security.auth.process.face.FaceAuthenticationProcess;
 import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationFilter;
 import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationProcess;
+import ru.stitchonfire.sso.security.auth.process.totp.TotpAuthenticationFilter;
+import ru.stitchonfire.sso.security.auth.process.totp.TotpAuthenticationProcess;
 import ru.stitchonfire.sso.security.handler.CustomDeniedHandlerHandler;
 
 import java.time.Duration;
@@ -79,16 +81,19 @@ public class SecurityConfig {
             HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         // define the chained authentication process and create the handler to manage it
         List<ChainedAuthenticationProcess> processes =
-                List.of(new MFAAuthenticationProcess(), new QuestionAuthenticationProcess());
+                List.of(new TotpAuthenticationProcess(), new QuestionAuthenticationProcess(), new FaceAuthenticationProcess());
         ChainedAuthenticationHandler chainedAuthenticationHandler = new ChainedAuthenticationHandler(processes);
 
         http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/mfa", "/question")
-                        .hasRole("NO_COMPLETE_AUTH") // all the route of the chained process
+                        .requestMatchers("/mfa", "/question", "/face")
+                        .hasRole("NO_COMPLETE_AUTH")
+                        .requestMatchers("/registration")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
 
                 .cors(Customizer.withDefaults())
+
                 // configuration to enable the chained core authentication process
                 .formLogin(config -> config.successHandler(chainedAuthenticationHandler).loginPage("/login").permitAll())
                 .addFilterBefore(
@@ -97,11 +102,17 @@ public class SecurityConfig {
 
                 // All process filter here
                 .addFilterAfter(
-                        new MFAAuthenticationFilter(authenticationManager, chainedAuthenticationHandler),
-                        UsernamePasswordAuthenticationFilter.class)
+                        new TotpAuthenticationFilter(authenticationManager, chainedAuthenticationHandler),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .addFilterAfter(
                         new QuestionAuthenticationFilter(authenticationManager, chainedAuthenticationHandler),
-                        MFAAuthenticationFilter.class);
+                        TotpAuthenticationFilter.class
+                )
+                .addFilterAfter(
+                        new FaceAuthenticationFilter(authenticationManager, chainedAuthenticationHandler),
+                        QuestionAuthenticationFilter.class
+                );
 
         return http.build();
     }

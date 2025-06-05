@@ -1,4 +1,4 @@
-package ru.stitchonfire.sso.security.auth.process.mfa;
+package ru.stitchonfire.sso.security.auth.process.totp;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,13 +12,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationHandler;
 import ru.stitchonfire.sso.security.auth.process.AbstractAuthenticationProcessFilter;
 
-public class MFAAuthenticationFilter extends AbstractAuthenticationProcessFilter {
+public class TotpAuthenticationFilter extends AbstractAuthenticationProcessFilter {
 
     private static final String MFA_KEY = "mfa_code";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher("/mfa", "POST");
 
-    public MFAAuthenticationFilter(
+    public TotpAuthenticationFilter(
             AuthenticationManager authenticationManager, ChainedAuthenticationHandler chainedAuthenticationHandler) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager, chainedAuthenticationHandler);
 
@@ -35,8 +35,8 @@ public class MFAAuthenticationFilter extends AbstractAuthenticationProcessFilter
 
         Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
 
-        MFAAuthenticationToken mfaAuthenticationToken =
-                new MFAAuthenticationToken(existingAuth.getPrincipal(), existingAuth, code);
+        TotpAuthenticationToken mfaAuthenticationToken =
+                new TotpAuthenticationToken(existingAuth.getPrincipal(), existingAuth, code);
         mfaAuthenticationToken.setDetails(this.authenticationDetailsSource.buildDetails(request));
 
         return this.getAuthenticationManager().authenticate(mfaAuthenticationToken);

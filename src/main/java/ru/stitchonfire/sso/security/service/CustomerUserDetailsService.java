@@ -18,7 +18,6 @@ public class CustomerUserDetailsService implements UserDetailsService {
     public CustomerUserDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.createUser();
     }
 
     @Override
@@ -27,19 +26,17 @@ public class CustomerUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public void createUser(String username, String password, String twoFactorKey, String answer) {
+    public void createUsers(String username, String password, String twoFactorKey, String question, String answer, String encodedFace) {
         userRepository.save(
                 User.builder()
                         .username(username)
                         .password(passwordEncoder.encode(password))
                         .twoFactorSecretKey(twoFactorKey)
-                        .questionAnswer(passwordEncoder.encode(answer))
+                        .questionAnswer(answer)
+                        .question(question)
+                        .encodedFace(encodedFace)
                         .build()
         );
     }
 
-    public void createUser() {
-        createUser("admin", "password", "PTDLEB7AQTPY5OXYLNVXVISBYAKWRLNS", "Сашенька");
-        createUser("user", "password", "HVR4CFHAFOWFGGFAGSA5JVTIMMPG6GMT", "Мурзик");
-    }
 }

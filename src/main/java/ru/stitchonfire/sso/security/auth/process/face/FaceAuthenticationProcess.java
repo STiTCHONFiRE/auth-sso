@@ -1,24 +1,21 @@
-package ru.stitchonfire.sso.security.auth.process.question;
+package ru.stitchonfire.sso.security.auth.process.face;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationProcess;
 import ru.stitchonfire.sso.security.auth.process.AbstractAuthenticationProcessFilter;
-import ru.stitchonfire.sso.security.auth.process.totp.TotpAuthenticationToken;
+import ru.stitchonfire.sso.security.auth.process.question.QuestionAuthenticationToken;
 
-public class QuestionAuthenticationProcess implements ChainedAuthenticationProcess {
+import java.io.IOException;
 
-    /*
-     * This class is an example, if you want more explanation, please refer to the MFAAuthenticationProcess.java
-     */
+public class FaceAuthenticationProcess implements ChainedAuthenticationProcess {
 
     @Override
     public Class<? extends AbstractAuthenticationProcessFilter> getFilterClass() {
-        return QuestionAuthenticationFilter.class;
+        return FaceAuthenticationFilter.class;
     }
 
     @Override
@@ -26,19 +23,19 @@ public class QuestionAuthenticationProcess implements ChainedAuthenticationProce
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication,
-            SavedRequest savedRequest)
-            throws ServletException, IOException {
+            SavedRequest savedRequest
+    ) throws ServletException, IOException {
         return true;
     }
 
     @Override
     public boolean isTheNext(Authentication authentication) {
-        return authentication instanceof TotpAuthenticationToken;
+        return authentication instanceof QuestionAuthenticationToken;
     }
 
     @Override
     public String getProcessUri() {
-        return "/question";
+        return "/face";
     }
 
     @Override
@@ -46,7 +43,9 @@ public class QuestionAuthenticationProcess implements ChainedAuthenticationProce
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication,
-            SavedRequest savedRequest) {
+            SavedRequest savedRequest
+    ) {
         return null;
     }
+
 }

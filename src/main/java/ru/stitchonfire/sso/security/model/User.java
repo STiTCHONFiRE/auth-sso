@@ -27,13 +27,23 @@ public class User implements UserDetails {
     @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     UUID id;
 
+    @Column(unique = true, nullable = false)
     String username;
 
+    @Column(nullable = false)
     String password;
 
+    @Column(nullable = false)
     String twoFactorSecretKey;
 
+    @Column(nullable = false)
+    String question;
+
+    @Column(nullable = false)
     String questionAnswer;
+
+    @Column(nullable = false, columnDefinition = "text")
+    String encodedFace;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -94,8 +94,10 @@
     <h1>Требуется дополнительная аутентификация!</h1>
     <p>Пожалуйста введите код из Google Authenticator</p>
     <!-- Error Message -->
-    <div th:if="${param.error}" class="error-message" id="error-message">Invalid verification code. Please try again.</div>
+    <div th:if="${param.error}" class="error-message" id="error-message">Неправильный код верификации!</div>
     <form name="mfa_from" method="post" th:action="@{/mfa}" class="verification-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
         <label for="code">Код</label>
         <input type="text" id="code" name="mfa_code" placeholder="Введите код..." required>
 

@@ -8,6 +8,12 @@ config:
   issuer-uri: http://localhost:8080
   redirect-uri: http://localhost:4200
 
+compreface:
+  base-url: http://localhost:8000                 # URL вашего CompreFace
+  api-key:  1b8e14d3-0de0-4022-8f3e-83500206e756  # API-key из UI
+  connect-timeout: 2s
+  read-timeout:    5s
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -22,4 +28,4 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update

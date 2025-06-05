@@ -19,7 +19,9 @@ public class QuestionAuthenticationFilter extends AbstractAuthenticationProcessF
             new AntPathRequestMatcher("/question", "POST");
 
     public QuestionAuthenticationFilter(
-            AuthenticationManager authenticationManager, ChainedAuthenticationHandler chainedAuthenticationHandler) {
+            AuthenticationManager authenticationManager,
+            ChainedAuthenticationHandler chainedAuthenticationHandler
+    ) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager, chainedAuthenticationHandler);
 
         setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/question?error"));

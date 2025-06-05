@@ -29,4 +29,5 @@ public class QuestionAuthenticationToken extends AbstractProcessToken {
     public int hashCode() {
         return Objects.hash(super.hashCode(), answer);
     }
+
 }
