@@ -15,7 +15,7 @@ public class FaceVerifierClient {
 
     RestClient restClient;
 
-    public String verifyFace(String base64Source, String base64Target) {
+    public FaceVerificationResponse verifyFace(String base64Source, String base64Target) {
         FaceVerificationRequest body = new FaceVerificationRequest(base64Source, base64Target, 1);
 
         return restClient
@@ -23,6 +23,6 @@ public class FaceVerifierClient {
                 .uri("/api/v1/verification/verify")
                 .body(body)
                 .retrieve()
-                .body(String.class);
+                .body(FaceVerificationResponse.class);
     }
 }
