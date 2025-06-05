@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import ru.stitchonfire.sso.client.FaceVerifierClient;
 import ru.stitchonfire.sso.security.model.User;
@@ -25,13 +26,17 @@ public class FaceAuthenticationTokenProvider implements AuthenticationProvider {
             String source = ((User) faceAuthentication.getPrincipal()).getEncodedFace();
             String target = Base64.getEncoder().encodeToString(faceAuthentication.getFaceFile().getBytes());
 
-            faceVerifierClient.verifyFace(target, source);
+            var res = faceVerifierClient.verifyFace(target, source);
+            var faceMatches = res.result().getFirst().faceMatches().getFirst();
+            if (faceMatches.similarity() > 0.95) {
+                authentication.setAuthenticated(true);
+                return authentication;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        authentication.setAuthenticated(true);
-        return authentication;
+        throw new BadCredentialsException("Face authentication failed");
     }
 
     @Override

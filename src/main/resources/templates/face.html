@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verification Code</title>
+  <title>Face Verification</title>
   <style>
       * {
           margin: 0;
@@ -94,7 +94,7 @@
   <h1>Требуется дополнительная аутентификация!</h1>
   <p>Пожалуйста, представьте фотографию своего лица</p>
   <!-- Error Message -->
-  <div th:if="${param.error}" class="error-message" id="error-message">Неправильный код верификации!</div>
+  <div th:if="${param.error}" class="error-message" id="error-message">Лица не совпадают!</div>
   <form name="face_from" method="post" th:action="@{/face}" class="verification-form" enctype="multipart/form-data">
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
