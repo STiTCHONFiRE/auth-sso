@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -34,6 +35,15 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
             HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws ServletException, IOException {
         SavedRequest savedRequest = this.requestCache.getRequest(request, response);
+
+        // Если у пользователя роль ROLE_MFA_UNCONFIGURED, перенаправляем на страницу настройки MFA
+        if (authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_MFA_UNCONFIGURED"::equals)) {
+            getRedirectStrategy().sendRedirect(request, response, "/setup-mfa");
+            return;
+        }
+
         if (savedRequest == null) {
             super.onAuthenticationSuccess(request, response, authentication);
             return;
@@ -51,7 +61,6 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
             throw new AuthenticationServiceException("Authentication token is not authenticated");
         }
 
-        // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
 
         boolean hasNext = false;
@@ -68,27 +77,14 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
         }
 
         if (!hasNext) {
-            // If there is no next process, restore the original authentication token
-            // (UsernamePasswordAuthenticationToken)
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(extractOriginalAuthentication(authentication));
             securityContextRepository.saveContext(context, request, response);
         }
 
-        // Redirect to the next step (process or OAuth2)
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    /**
-     * Build the process URI
-     *
-     * @param request the current request
-     * @param response the current response
-     * @param authentication the current authentication
-     * @param savedRequest the saved request
-     * @param process the current process
-     * @return the process URI
-     */
     private String buildProcessUri(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -103,12 +99,6 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
                 process.getProcessQuery(request, response, authentication, savedRequest));
     }
 
-    /**
-     * Extract the original authentication token (UsernamePasswordAuthenticationToken) from the current authentication
-     *
-     * @param authentication the current authentication
-     * @return the original authentication token
-     */
     private Authentication extractOriginalAuthentication(Authentication authentication) {
         if (authentication instanceof NoCompletedAuthenticationToken noCompletedAuthenticationToken) {
             return noCompletedAuthenticationToken.getOriginalAuthentication();
@@ -122,13 +112,6 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
                 "Unable to find the original authentication token (UsernamePasswordAuthenticationToken)");
     }
 
-    /**
-     * Update the NoCompletedAuthenticationToken actual process to the next process
-     * Usefully to verify that the user does not skip any process
-     *
-     * @param authentication the current authentication
-     * @param filterClass the next process filter class
-     */
     private void updateToNoCompletedToken(
             Authentication authentication, Class<? extends AbstractAuthenticationProcessFilter> filterClass) {
         if (authentication instanceof AbstractProcessToken processToken
@@ -139,4 +122,5 @@ public class ChainedAuthenticationHandler extends SimpleUrlAuthenticationSuccess
             throw new AuthenticationServiceException("Unable to find the NoCompletedAuthenticationToken");
         }
     }
+
 }

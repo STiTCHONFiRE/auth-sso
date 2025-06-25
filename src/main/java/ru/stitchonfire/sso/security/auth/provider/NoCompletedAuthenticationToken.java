@@ -10,10 +10,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import ru.stitchonfire.sso.security.auth.process.AbstractAuthenticationProcessFilter;
 import ru.stitchonfire.sso.security.auth.process.AbstractProcessToken;
 
-/**
- * This token is used to keep track of the authentication process. It is stored in the session.
- * It is used to keep track of the original authentication and the actual authentication process.
- */
 public class NoCompletedAuthenticationToken extends AbstractProcessToken {
 
     @Getter
@@ -21,13 +17,13 @@ public class NoCompletedAuthenticationToken extends AbstractProcessToken {
     private Class<? extends AbstractAuthenticationProcessFilter> actualAuthenticationProcess;
 
     @Getter
-    private final UsernamePasswordAuthenticationToken originalAuthentication; // to be restored at the end
+    private final UsernamePasswordAuthenticationToken originalAuthentication;
 
     public NoCompletedAuthenticationToken(
             Object principal, UsernamePasswordAuthenticationToken originalAuthentication) {
         super(List.of(new SimpleGrantedAuthority("ROLE_NO_COMPLETE_AUTH")), principal, null);
         this.originalAuthentication = originalAuthentication;
-        super.setAuthenticated(false); // to be sure that the token is not authenticated
+        super.setAuthenticated(false);
     }
 
     @Override

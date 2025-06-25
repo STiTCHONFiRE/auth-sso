@@ -56,14 +56,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .with(authorizationServerConfigurer, (authorizationServer) ->
                         authorizationServer
-                                .oidc(Customizer.withDefaults())	// Enable OpenID Connect 1.0
+                                .oidc(Customizer.withDefaults())
                 )
                 .authorizeHttpRequests((authorize) ->
                         authorize
                                 .anyRequest().authenticated()
                 )
-                // Redirect to the login page when not authenticated from the
-                // authorization endpoint
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint("/login"),
@@ -79,12 +77,13 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(
             HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        // define the chained authentication process and create the handler to manage it
         List<ChainedAuthenticationProcess> processes =
                 List.of(new TotpAuthenticationProcess(), new QuestionAuthenticationProcess(), new FaceAuthenticationProcess());
         ChainedAuthenticationHandler chainedAuthenticationHandler = new ChainedAuthenticationHandler(processes);
 
         http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/setup-mfa") // Новая страница для настройки MFA
+                        .hasRole("MFA_UNCONFIGURED")
                         .requestMatchers("/mfa", "/question", "/face")
                         .hasRole("NO_COMPLETE_AUTH")
                         .requestMatchers("/registration")
@@ -93,8 +92,7 @@ public class SecurityConfig {
                         .authenticated())
 
                 .cors(Customizer.withDefaults())
-
-                // configuration to enable the chained core authentication process
+                .csrf(Customizer.withDefaults())
                 .formLogin(config -> config.successHandler(chainedAuthenticationHandler).loginPage("/login").permitAll())
                 .addFilterBefore(
                         new AntiExploitAuthenticationProcessFilter(processes),

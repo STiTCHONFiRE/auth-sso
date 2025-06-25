@@ -12,8 +12,6 @@ public abstract class AbstractProcessToken extends AbstractAuthenticationToken {
 
     private final Object principal;
 
-    // linkedAuthentication is the previous authentication that was used to authenticate the user
-    // normally is an instance of NoCompletedAuthenticationToken
     private final Authentication linkedAuthentication;
 
     protected AbstractProcessToken(

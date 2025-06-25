@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -33,7 +34,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true) // Изменено на true
     String twoFactorSecretKey;
 
     @Column(nullable = false)
@@ -47,7 +48,12 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if (twoFactorSecretKey == null || twoFactorSecretKey.isEmpty()) {
+            return List.of(new SimpleGrantedAuthority("ROLE_MFA_UNCONFIGURED"));
+        }
+        // Если ключ есть, пользователь должен пройти остальные этапы MFA.
+        // Роль NO_COMPLETE_AUTH используется для этого.
+        return List.of(new SimpleGrantedAuthority("ROLE_NO_COMPLETE_AUTH"));
     }
 
     @Override

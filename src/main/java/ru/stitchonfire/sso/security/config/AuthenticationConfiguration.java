@@ -59,25 +59,25 @@ public class AuthenticationConfiguration {
         );
     }
 
-//    @Bean
-//    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(
-//            OidcUserInfoService userInfoService, UserDetailsService userDetailsService) {
-//        return (context) -> {
-//            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
-//                var profileScope = context.getAuthorizedScopes().stream().filter(scope -> scope.equals("profile")).findFirst();
-//
-//                if (profileScope.isPresent()) {
-//                    OidcUserInfo userInfo = userInfoService.loadUser(
-//                            context.getPrincipal().getName());
-//                    context.getClaims().claims(claims ->
-//                            claims.putAll(userInfo.getClaims()));
-//                }
-//            } else {
-//                if (userDetailsService.loadUserByUsername(context.getPrincipal().getName()) instanceof User u) {
-//                    context.getClaims().subject(u.getId().toString());
-//                }
-//
-//            }
-//        };
-//    }
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(
+            OidcUserInfoService userInfoService, UserDetailsService userDetailsService) {
+        return (context) -> {
+            if (OidcParameterNames.ID_TOKEN.equals(context.getTokenType().getValue())) {
+                var profileScope = context.getAuthorizedScopes().stream().filter(scope -> scope.equals("profile")).findFirst();
+
+                if (profileScope.isPresent()) {
+                    OidcUserInfo userInfo = userInfoService.loadUser(
+                            context.getPrincipal().getName());
+                    context.getClaims().claims(claims ->
+                            claims.putAll(userInfo.getClaims()));
+                }
+            } else {
+                if (userDetailsService.loadUserByUsername(context.getPrincipal().getName()) instanceof User u) {
+                    context.getClaims().subject(u.getId().toString());
+                }
+
+            }
+        };
+    }
 }

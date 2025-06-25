@@ -30,7 +30,6 @@ public class CustomDeniedHandlerHandler extends AccessDeniedHandlerImpl {
 
         if (authentication instanceof NoCompletedAuthenticationToken noCompletedAuthenticationToken
                 && !noCompletedAuthenticationToken.isAuthenticated()) {
-            // clear the session and the security context
             HttpSession session = request.getSession(false);
             if (session != null) {
                 session.invalidate();

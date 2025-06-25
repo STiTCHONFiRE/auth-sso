@@ -39,4 +39,10 @@ public class CustomerUserDetailsService implements UserDetailsService {
         );
     }
 
+    public void updateUserTwoFactorSecretKey(String username, String secretKey) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        user.setTwoFactorSecretKey(secretKey);
+        userRepository.save(user);
+    }
 }

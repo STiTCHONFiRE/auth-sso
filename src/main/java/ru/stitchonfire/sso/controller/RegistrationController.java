@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.stitchonfire.sso.dto.RegistrationDto;
-import ru.stitchonfire.sso.security.service.OidcUserInfoService;
 import ru.stitchonfire.sso.security.service.CustomerUserDetailsService;
+import ru.stitchonfire.sso.security.service.OidcUserInfoService;
 import ru.stitchonfire.sso.security.service.TotpService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
@@ -32,16 +31,9 @@ public class RegistrationController {
 
     OidcUserInfoService oidcUserInfoService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     @GetMapping("/registration")
     public String registration(Model model) {
-
         String base32Secret = totpService.generateBase32Secret();
-
         String otpAuthUri = totpService.buildOtpAuthUri(base32Secret);
 
         try {
@@ -59,8 +51,7 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String registerUser(
-            @Valid
-            @ModelAttribute("dto")
+            @Valid @ModelAttribute("dto")
             RegistrationDto dto,
             BindingResult br
     ) throws Exception {
@@ -79,7 +70,7 @@ public class RegistrationController {
 
             Base64.Encoder encoder = Base64.getEncoder();
             try (OutputStream base64Out = encoder.wrap(out)) {
-                in.transferTo(base64Out);   // Java 9+
+                in.transferTo(base64Out);
             }
 
             String base64 = out.toString();
@@ -100,4 +91,8 @@ public class RegistrationController {
         return "redirect:http://localhost:4200";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }

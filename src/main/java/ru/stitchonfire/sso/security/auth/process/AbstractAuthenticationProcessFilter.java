@@ -12,10 +12,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import ru.stitchonfire.sso.security.auth.handler.ChainedAuthenticationHandler;
 import ru.stitchonfire.sso.security.auth.provider.NoCompletedAuthenticationToken;
 
-/**
- * This class is used to create the filter associated with an authentication process
- * A process has always a filter to handle the authentication process, for example, verify the OTP code
- */
 public abstract class AbstractAuthenticationProcessFilter extends AbstractAuthenticationProcessingFilter {
 
     protected AbstractAuthenticationProcessFilter(
@@ -39,9 +35,6 @@ public abstract class AbstractAuthenticationProcessFilter extends AbstractAuthen
             throw new AuthenticationServiceException("NoCompletedAuthenticationToken is not found");
         }
 
-        // Check if the actual authentication process is the same as the current process
-        // Security to prevent an user to skip the one authentication process
-        // see AntiExploitAuthenticationProcessFilter also
         if (noCompletedAuthenticationToken.getActualAuthenticationProcess() != getClass()) {
             throw new AuthenticationServiceException(
                     "Actual authentication process is not " + getClass().getSimpleName());
@@ -50,19 +43,8 @@ public abstract class AbstractAuthenticationProcessFilter extends AbstractAuthen
         return authenticationProcess(request, response);
     }
 
-    /**
-     * This method is used to process the authentication
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @return Authentication
-     * @throws AuthenticationException
-     */
     public abstract Authentication authenticationProcess(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException;
 
-    /**
-     * This method is used to get the http method of the process (in most cases POST)
-     * @return String http method
-     */
     public abstract String getHttpMethod();
 }

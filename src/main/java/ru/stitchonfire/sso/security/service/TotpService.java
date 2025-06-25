@@ -47,6 +47,17 @@ public class TotpService {
         }
     }
 
+    public String generateQrCodeDataUri(String otpAuthUri) throws Exception {
+        BitMatrix matrix = new MultiFormatWriter()
+                .encode(otpAuthUri, BarcodeFormat.QR_CODE, 240, 240);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
+            String b64 = Base64.getEncoder().encodeToString(baos.toByteArray());
+            return "data:image/png;base64," + b64;
+        }
+    }
+
     public boolean verifyCodeWithSecret(String base32Secret, int code) {
         TOTPGenerator totpGenerator = new TOTPGenerator.Builder(new Base32().decode(base32Secret))
                 .withHOTPGenerator(builder -> {
@@ -59,15 +70,6 @@ public class TotpService {
         return totpGenerator.verify(String.format("%06d", code));
     }
 
-    public String generateQrCodeDataUri(String otpAuthUri) throws Exception {
-        BitMatrix matrix = new MultiFormatWriter()
-                .encode(otpAuthUri, BarcodeFormat.QR_CODE, 240, 240);
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
-            String b64 = Base64.getEncoder().encodeToString(baos.toByteArray());
-            return "data:image/png;base64," + b64;
-        }
-    }
 
 }

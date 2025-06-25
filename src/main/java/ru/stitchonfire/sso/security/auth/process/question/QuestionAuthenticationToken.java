@@ -13,7 +13,7 @@ public class QuestionAuthenticationToken extends AbstractProcessToken {
     public QuestionAuthenticationToken(Object principal, Authentication linkedAuthentication, String answer) {
         super(null, principal, linkedAuthentication);
         this.answer = answer;
-        super.setAuthenticated(false); // to be sure that the token is not authenticated
+        super.setAuthenticated(false);
     }
 
     @Override

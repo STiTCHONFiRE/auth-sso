@@ -25,19 +25,12 @@ public class TotpAuthenticationProcess implements ChainedAuthenticationProcess {
             Authentication authentication,
             SavedRequest savedRequest)
             throws ServletException, IOException {
-        // Here is an example, you can implement your own logic
         User user = (User) authentication.getPrincipal();
         return user.isAccountNonExpired() && user.isEnabled();
     }
 
     @Override
     public boolean isTheNext(Authentication authentication) {
-        /*
-        This method determines whether MFAAuthenticationProcess should be launched or not. This method manages the chain mechanics.
-        NoCompletedAuthenticationToken is the token returned by the login operation.
-        So this process will be executed just after /login. If we wanted this process to be executed after another,
-        we would have had to set the token of that process (e.g. in QuestionAuthenticationProcess).
-         */
         return authentication instanceof NoCompletedAuthenticationToken;
     }
 

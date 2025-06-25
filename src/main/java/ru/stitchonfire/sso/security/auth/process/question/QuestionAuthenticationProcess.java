@@ -12,10 +12,6 @@ import ru.stitchonfire.sso.security.auth.process.totp.TotpAuthenticationToken;
 
 public class QuestionAuthenticationProcess implements ChainedAuthenticationProcess {
 
-    /*
-     * This class is an example, if you want more explanation, please refer to the MFAAuthenticationProcess.java
-     */
-
     @Override
     public Class<? extends AbstractAuthenticationProcessFilter> getFilterClass() {
         return QuestionAuthenticationFilter.class;
@@ -49,4 +45,5 @@ public class QuestionAuthenticationProcess implements ChainedAuthenticationProce
             SavedRequest savedRequest) {
         return null;
     }
+
 }
